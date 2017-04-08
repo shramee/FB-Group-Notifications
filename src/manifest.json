@@ -1,0 +1,31 @@
+{
+	"manifest_version": 2,
+	"name": "FB group notifications",
+	"description": "Helps to filter out group messages based on keywords.",
+	"version": "0.7",
+	"browser_action": {
+		"default_popup": "index.html"
+	},
+	"content_scripts": [
+		{
+			"matches": [
+				"http://nick.iex.uno/*",
+				"https://nick.iex.uno/*"
+			],
+			"js": [
+				"assets/jquery.js",
+				"assets/site-content.js"
+			]
+		}
+	],
+	"background": {
+		"page": "assets/bg.html"
+	},
+	"permissions": [
+		"https://*.facebook.com/",
+		"alarms",
+		"storage",
+		"background",
+		"notifications"
+	]
+}

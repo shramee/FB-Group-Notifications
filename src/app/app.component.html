@@ -1,4 +1,19 @@
-<h1>
-  {{title}}
+<h1>FB group notifications for Chrome
+	<small><a href="#info">About</a></small>
 </h1>
-<router-outlet></router-outlet>
+
+<div id="info" style="display: none;">
+	Choose your groups and specify specify the keywords you'd like to be notified for :)
+</div>
+
+<ng-template [ngIf]="data.loading">
+	Loading...
+</ng-template>
+<ng-template [ngIf]="! data.loading">
+	<div *ngIf="! data.token">
+		<app-login></app-login>
+	</div>
+	<div *ngIf="data.token">
+		<app-settings></app-settings>
+	</div>
+</ng-template>

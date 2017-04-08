@@ -1,1 +1,131 @@
 /* You can add global styles to this file, and also import other style files */
+/* http://meyerweb.com/eric/tools/css/reset/
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font: inherit;
+	vertical-align: baseline;
+	font-weight: normal;
+}
+/* HTML5 display-role reset for older browsers */
+article, aside, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section {
+	display: block;
+}
+html {
+	font: 14px sans-serif;
+}
+body {
+	line-height: 1;
+	min-width:430px;
+	font: inherit;
+	padding: 1em;
+}
+
+small {
+	font-size: 0.7em;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	margin: 0 0 0.5em;
+	small {
+		float: right;
+	}
+}
+
+h1 {
+	font-size: 20px;
+	line-height:20px;
+}
+
+h2 {
+	font-size: 1.31em;
+}
+
+h3 {
+	font-size: 1.2em;
+}
+
+h4 {
+	font-size: 1.1em;
+}
+
+h5 {
+	font-size: 1em;
+}
+
+h6 {
+	font-size: 0.9em;
+}
+
+p {
+	margin-bottom: 1em;
+}
+
+a {
+	text-decoration: none;
+}
+
+ol, ul {
+	list-style: none;
+}
+blockquote, q {
+	quotes: none;
+	&:before, &:after {
+		content: '';
+	}
+}
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+input, button {
+	font: 16px/1.6 sans-serif;
+	padding: 5px 7px;
+	width: 100%;
+	display: block;
+	margin: 0.5em 0;
+	box-sizing: border-box;
+}
+
+.fb-login {
+	background: #4c69ba;
+	background: -webkit-linear-gradient(#4c69ba,#3b55a0);
+	background: linear-gradient(#4c69ba,#3b55a0);
+	cursor: pointer;
+	border-color: #4c69ba;
+	border-radius: 2px;
+	color: #fff;
+	font: 20px Helvetica neue;
+	-webkit-font-smoothing: antialiased;
+	text-shadow: 0 -1px 0 #354c8c;
+	padding: 7px 16px 7px 7px;
+	display: inline-block;
+	svg {
+		display: inline-block;
+		vertical-align: middle;
+		margin: 0 7px 0 0
+	}
+}
+
+section {
+	text-align: center;
+}
