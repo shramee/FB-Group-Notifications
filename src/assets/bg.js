@@ -159,16 +159,15 @@ var fbgn = {
 		}
 	},
 	runSettingsChanged: function () {
-		if ( typeof fbgn.runSettingsChanged.changed != 'undefined' && fbgn.runSettingsChanged.changed ) {
-
+		if ( fbgn._settingsChanged ) {
 			return true;
 		} else {
 			chrome.storage.local.get( 'settingsChanged', function( dt ) {
-				chrome.storage.local.set( {settingsChanged: 0} );
 				if ( dt.settingsChanged ) {
-					fbgn._settingsChanged = true;
+					chrome.storage.local.set( {settingsChanged: 0} );
+					fbgn._settingsChanged = 1;
 				} else {
-					fbgn._settingsChanged = false;
+					fbgn._settingsChanged = 0;
 				}
 			} );
 		}
