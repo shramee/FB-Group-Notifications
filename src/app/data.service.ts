@@ -22,6 +22,10 @@ export class DataService {
 		this.init();
 	}
 
+	public refresh() {
+		this.appRef.tick();
+	}
+
 	private init() {
 		//let self = this;
 
@@ -63,7 +67,7 @@ export class DataService {
 			if ( chrome.storage && chrome.storage.local ) {
 				chrome.storage.local.get( keys, data => {
 					obs.next( data );
-					this.appRef.tick();
+					this.refresh();
 					obs.complete();
 				} );
 			} else {
@@ -78,7 +82,7 @@ export class DataService {
 		} );
 	}
 
-	syncSettings( callback?:()=>{} ) {
+	syncSettings( callback?:()=>void ) {
 		this.settings.settingsChanged = 1;
 		if ( callback ) {
 			this.set( this.settings, callback )

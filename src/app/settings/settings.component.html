@@ -1,8 +1,11 @@
-<input [(ngModel)]="data.settings.keywords" placeholder="Keywords">
-<input [(ngModel)]="data.settings.group1" placeholder="Group 1">
-<input [(ngModel)]="data.settings.group2" placeholder="Group 2">
-<input [(ngModel)]="data.settings.group3" placeholder="Group 3">
-<input [(ngModel)]="data.settings.group4" placeholder="Group 4">
-<input [(ngModel)]="data.settings.group5" placeholder="Group 5">
+<div class="notice" *ngIf="notice" [innerHTML]="notice"></div>
+
+<input [(ngModel)]="data.settings.keywords" placeholder="Keywords (comma separated)">
+<input [(ngModel)]="data.settings.group1" placeholder="Group 1 Link">
+<input [(ngModel)]="data.settings.group2" placeholder="Group 2 Link">
+<input [(ngModel)]="data.settings.group3" placeholder="Group 3 Link">
+<input [(ngModel)]="data.settings.group4" placeholder="Group 4 Link">
+<input [(ngModel)]="data.settings.group5" placeholder="Group 5 Link">
 <button (click)="save()">Save</button>
-<button (click)="reset()">Reset</button>
+<button *ngIf="! confirmReset" (click)="switchConfirmReset()">Reset</button>
+<button *ngIf="confirmReset" style="background:#c20" (click)="reset()">Really reset settings?</button>

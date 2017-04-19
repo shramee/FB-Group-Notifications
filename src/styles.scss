@@ -35,6 +35,7 @@ html {
 body {
 	line-height: 1;
 	min-width:430px;
+	min-height: 439px;
 	font: inherit;
 	padding: 1em;
 }
@@ -106,6 +107,16 @@ input, button {
 	box-sizing: border-box;
 }
 
+button {
+	background: #2980b9;
+	color: #fff;
+	border: none;
+	border-radius: 3px;
+	letter-spacing: 2px;
+	text-transform: uppercase;
+	margin: 0.5em 0;
+}
+
 .fb-login {
 	background: #4c69ba;
 	background: -webkit-linear-gradient(#4c69ba,#3b55a0);
@@ -124,6 +135,13 @@ input, button {
 		vertical-align: middle;
 		margin: 0 7px 0 0
 	}
+}
+
+.notice {
+	text-align: center;
+	color: #232;
+	background: #af7;
+	padding: 7px;
 }
 
 section {

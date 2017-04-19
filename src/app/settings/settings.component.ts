@@ -1,36 +1,54 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {DataService} from "../data.service";
 
-@Component({
-  selector: 'app-settings',
-  templateUrl: './settings.component.html',
-  styleUrls: ['./settings.component.scss']
-})
+@Component( {
+	selector: 'app-settings',
+	templateUrl: './settings.component.html',
+	styleUrls: ['./settings.component.scss']
+} )
 export class SettingsComponent implements OnInit {
+	notice: string;
+	confirmReset: boolean = false;
 
-  constructor( public data:DataService ) { }
+	constructor( public data: DataService ) {
+	}
 
-  ngOnInit() {
-  }
+	ngOnInit() {
+	}
 
-  save() {
-    this.data.set( { settingsChanged: 1 } );
-    this.data.syncSettings();
-  }
+	showNotice( notice:string ) {
+		let t = this;
+		t.notice = notice;
+		this.data.refresh();
+		setTimeout( function () {
+			t.notice = '';
+			this.data.refresh();
+		}, 2500 );
+	}
 
-  reset() {
-    if ( ! confirm( 'Are you sure you want to reset all settings? \n You will have to login again.' ) ) {
-      return;
-    }
-    this.data.set( { settingsChanged: 1 } );
-    this.data.settings = {
-      keywords: '',
-      group1: '',
-      group2: '',
-      group3: '',
-      group4: '',
-      group5: '',
-    };
-    this.data.syncSettings();
-  }
+	save() {
+		this.data.set( {settingsChanged: 1} );
+		this.data.syncSettings( () => {
+			this.showNotice( '&#x2714; Settings Saved' );
+		} );
+	}
+
+	switchConfirmReset() {
+		this.confirmReset = true;
+		this.data.refresh();
+	}
+	reset() {
+		this.confirmReset = false;
+		this.data.set( {settingsChanged: 1} );
+		this.data.settings = {
+			keywords: '',
+			group1: '',
+			group2: '',
+			group3: '',
+			group4: '',
+			group5: '',
+		};
+		this.data.syncSettings();
+		this.showNotice( '&#x2714; Settings Reset' );
+	}
 }

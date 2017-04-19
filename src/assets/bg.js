@@ -2,7 +2,7 @@
  * Created by shramee on 01/04/17.
  */
 var fbgn = {
-	keywords: '',
+	keywords: [],
 	tkn: '',
 	grpURLs: [],
 	_settingsChanged: 0,
@@ -49,24 +49,30 @@ var fbgn = {
 		} );
 	},
 
-	init: function () {
+	getSettings: function(){
 		chrome.storage.local.get( [
 			'access_token', 'keywords', 'group1', 'group2', 'group3', 'group4', 'group5'
 		], function ( data ) {
-			$.each( data, function( k,v ) {
-				if ( -1 < k.indexOf( 'group' ) ) {
-					fbgn.grpURLs.push( v );
-				} else if ( -1 < k.indexOf( 'keywords' ) ) {
-					fbgn.keywords = v.replace( /[ ,]+/g, ',' ).split( ',' );
-				} else if ( -1 < k.indexOf( 'access_token' ) ) {
-					fbgn.tkn = v;
+			fbgn.keywords = [];
+			fbgn.grpURLs = [];
+			$.each( data, function ( k, v ) {
+				if ( v ) {
+					if ( - 1 < k.indexOf( 'group' ) ) {
+						fbgn.grpURLs.push( v );
+					} else if ( - 1 < k.indexOf( 'keywords' ) ) {
+						fbgn.keywords = v.replace( /[ ,]+/g, ',' ).split( ',' );
+					} else if ( - 1 < k.indexOf( 'access_token' ) ) {
+						fbgn.tkn = v;
+					}
 				}
 			} );
-			if ( fbgn.grpURLs.length && fbgn.keywords && fbgn.tkn ) {
-				fbgn.setAlarm();
-				fbgn.initProperties();
-			}
+			fbgn.initProperties();
 		} );
+	},
+
+	init: function () {
+		fbgn.getSettings();
+		fbgn.setAlarm();
 	},
 
 	runCheckToken: function() {
@@ -83,11 +89,14 @@ var fbgn = {
 	},
 	runSettingsChanged: function () {
 		if ( fbgn._settingsChanged ) {
+			fbgn._settingsChanged = 0;
 			return true;
 		} else {
 			chrome.storage.local.get( 'settingsChanged', function( dt ) {
 				if ( dt.settingsChanged ) {
-					chrome.storage.local.set( {settingsChanged: 0} );
+					chrome.storage.local.set( {settingsChanged: 0}, function () {
+						fbgn.getSettings();
+					} );
 					fbgn._settingsChanged = 1;
 				} else {
 					fbgn._settingsChanged = 0;
@@ -97,7 +106,7 @@ var fbgn = {
 	},
 
 	_notified: [],
-	addNotif: function( keyword, grpName ){
+	notify: function( keyword, grpName ){
 		var notif = {
 			type: 'basic',
 			title: 'Match found for ' + keyword + '.',
@@ -112,7 +121,7 @@ var fbgn = {
 			}
 		);
 	},
-	notify: function( id, keyword, grpName ) {
+	maybeNotify: function( id, keyword, grpName ) {
 
 		if ( 0 > fbgn._notified.indexOf( id ) ) {
 			fbgn._notified.push( id );
@@ -123,40 +132,42 @@ var fbgn = {
 				// Notify only if same group has not been notified
 				fbgn._run_data.notified.push( grpName );
 				notified = true;
-				fbgn.addNotif( keyword, grpName );
+				fbgn.notify( keyword, grpName );
 			}
 
 			console.log( 'Keyword: ' + keyword, '/n Group: ' + grpName, '/n ID: ' + id, notified ? 'Notified' : 'SkippedNotif' );
 		}
 	},
 
+	grpNameFromUrl: function( url ) {
+		return url
+			.replace( /http[s]?:\/\/(www)?\.?facebook.com\/groups\//, '' )
+			.replace( /[\/?]+[A-z=&0-9\/]*$/, '' );
+	},
+	grpKeywordSearch: function( response, keyword, grpName ) {
+		var
+			rgx = new RegExp( '[A-z0-9 ,.-]{0,25}' + keyword + '[A-z0-9 ,.-]{0,25}', 'gi' ),
+			match = response.match( rgx );
+
+		if ( match ) {
+			for ( var mi = 0; mi < match.length; mi ++ ) fbgn.maybeNotify( match[mi], keyword, grpName );
+		}
+	},
 	processGrp: function( url ) {
 		$.get( url, function ( response ) {
-			$resp = $( response );
-			grpName = url
-				.replace( /http[s]?:\/\/(www)?\.?facebook.com\/groups\//, '' )
-				.replace( /\/\??[A-z=&0-9\/]*$/, '' );
-			comms = [];
+
+			var grpName = fbgn.grpNameFromUrl( url );
 
 			for ( var ki = 0; ki < fbgn.keywords.length; ki ++ ) {
-				var
-					kw = fbgn.keywords[ki],
-					rgx = new RegExp( '[A-z0-9 ,.-]{0,25}' + kw + '[A-z0-9 ,.-]{0,25}', 'gi' ),
-					match = response.match( rgx );
-
-				console.log( rgx, '\n', match );
-
-				if ( match ) {
-					for ( var mi = 0; mi < match.length; mi ++ ) {
-						fbgn.notify( match[mi], kw, grpName );
-					}
-				}
+				fbgn.grpKeywordSearch( response, fbgn.keywords[ki], grpName );
 			}
+
 		} );
 	},
+
 	_run_data: { notified: [] },
 	run: function() {
-		if ( fbgn.runSettingsChanged() ) {
+		if ( fbgn.runSettingsChanged() || ! fbgn.grpURLs.length || ! fbgn.keywords.length ) {
 			return;
 		}
 
@@ -171,23 +182,14 @@ var fbgn = {
 
 	},
 
-
-	reInit: function ( minutes ) {
-		minutes = minutes > 0 ? minutes : 1;
-		chrome.alarms.clearAll(
-			function() {
-				setTimeout(
-					fbgn.init,
-					minutes * 60000 // 1minute = 60,000ms
-				);
-			}
-		);
-	},
 	notificationClicked: function( nId ) {
 		id = nId.split( '|' )[0];
 		chrome.tabs.create( { url: 'https://www.facebook.com/groups/' + id } );
 	}
 };
+
+// No cache
+$.ajaxSetup({ cache: false });
 
 fbgn.init();
 
