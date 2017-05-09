@@ -60,7 +60,7 @@ var fbgn = {
 					if ( - 1 < k.indexOf( 'group' ) ) {
 						fbgn.grpURLs.push( v );
 					} else if ( - 1 < k.indexOf( 'keywords' ) ) {
-						fbgn.keywords = v.replace( /[ ,]+/g, ',' ).split( ',' );
+						fbgn.keywords = v.replace( /[,]+/g, ',' ).split( ',' );
 					} else if ( - 1 < k.indexOf( 'access_token' ) ) {
 						fbgn.tkn = v;
 					}
